@@ -1,0 +1,17 @@
+# Helm
+charts/*/charts/
+*/charts/
+*.tgz
+.helm/
+
+# Claude Code worktrees
+.claude/
+
+# Old chart directories (migrated to charts/)
+helm-starter/
+helm-steamulo-app/
+helm-steamulo-databases/
+helm-steamulo-network/
+
+# OS
+.DS_Store

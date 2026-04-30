@@ -1,0 +1,21 @@
+{{- if eq .Values.database.type "mariadb" }}
+{{- range .Values.mariadb.users }}
+---
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: User
+metadata:
+  name: {{ include "databases.fullname" $ }}-{{ .name }}
+spec:
+  name: {{ .name }}
+  mariaDbRef:
+    name: {{ include "databases.fullname" $ }}-mariadb
+  passwordSecretKeyRef:
+    name: {{ .passwordSecretName }}
+    key: password
+  maxUserConnections: 20
+  host: {{ .host | quote }}
+  cleanupPolicy: Delete
+  requeueInterval: 30s
+  retryInterval: 5s
+{{- end }}
+{{- end }}

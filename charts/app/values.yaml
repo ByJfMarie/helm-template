@@ -1,0 +1,84 @@
+replicaCount: 1
+livenessProbeEnabled: true
+readinessProbeEnabled: true
+
+image:
+  containerName: ""
+  repository: nginx
+  pullPolicy: IfNotPresent
+  # Use digest for immutable image references (takes precedence over tag when set)
+  digest: ""
+  tag: "latest"
+  env: []
+  # - name: MY_VAR
+  #   value: "my-value"
+  envFrom: []
+  # - configMapRef:
+  #     name: my-configmap
+  # - secretRef:
+  #     name: my-secret
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  name: app
+  type: ClusterIP
+  port: 80
+  targetPort: 80
+
+## Resource presets: none, nano, micro, small, medium, large, xlarge, 2xlarge
+## Ignored when resources is set explicitly (resources recommended for production).
+resourcesPreset: "small"
+resources: {}
+# resources:
+#   limits:
+#     cpu: 500m
+#     memory: 512Mi
+#   requests:
+#     cpu: 250m
+#     memory: 256Mi
+
+livenessProbe:
+  initialDelaySeconds: 20
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  initialDelaySeconds: 20
+  httpGet:
+    path: /
+    port: http
+
+initContainers: []
+
+deployVolume: false
+volumes: []
+volumeMounts: []
+
+persistent:
+  enabled: false
+  name: app-data
+  storage: 1Gi
+  storageClassName: ""
+  accessMode: ReadWriteOnce
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

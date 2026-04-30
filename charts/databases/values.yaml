@@ -1,0 +1,124 @@
+nameOverride: ""
+fullnameOverride: ""
+
+database:
+  type: postgres  # postgres | mariadb | mysql | mongodb | redis
+
+# ─── PostgreSQL (CloudNativePG operator) ───────────────────────────────────────
+postgres:
+  instances: 1
+  version: "16.3"
+  storage:
+    size: 5Gi
+    storageClassName: ""
+  initdb:
+    database: mydb
+    user: myuser
+    password: ""
+    passwordSuperUser: ""
+    passwordSecretName: postgres-app-secret
+    scripts: ""
+    extraLibs: []
+    # - pg_stat_statements
+    # - pgcrypto
+  postgresql:
+    maxConnections: "200"
+    sharedBuffers: "256MB"
+    pgHba:
+      - host all all 0.0.0.0/0 scram-sha-256
+  backup:
+    enabled: false
+    schedule: "0 0 * * *"
+    retentionPolicy: "30d"
+    s3:
+      bucketName: ""
+      destinationPath: ""
+      endpointURL: "https://s3.eu-central-003.backblazeb2.com"
+      secretName: backup-s3-secret
+
+# ─── MariaDB (mariadb-operator) ────────────────────────────────────────────────
+mariadb:
+  image: mariadb:11.4
+  replicaCount: 1
+  rootPassword: ""
+  rootPasswordSecretName: mariadb-root-password
+  size: 10Gi
+  storageClassName: ""
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 250m
+  databases:
+    - name: mydb
+      characterSet: utf8mb4
+      collate: utf8mb4_unicode_ci
+  users:
+    - name: myuser
+      password: ""
+      passwordSecretName: mariadb-myuser-password
+      database: mydb
+      host: "%"
+      privileges: "SELECT, INSERT, UPDATE, DELETE"
+
+# ─── Redis (redis-operator by OpsTree) ─────────────────────────────────────────
+redis:
+  type: standalone
+  version: "7.2.4"
+  storageClassName: ""
+  size: 5Gi
+  redisPassword: ""
+  redisSecret:
+    name: redis-secret
+  exporterEnabled: false
+  exporterVersion: "1.62.0"
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+# ─── MySQL (mysql-operator) ────────────────────────────────────────────────────
+mysql:
+  instances: 1
+  tlsUseSelfSigned: true
+  router:
+    instances: 1
+  version: "8.4.0"
+  baseServerId: 1000
+  storage:
+    storageSize: "10Gi"
+    storageClassName: ""
+  credentials:
+    rootUser: root
+    rootPassword: ""
+  backup:
+    enabled: false
+    schedule: "0 0 * * *"
+    s3:
+      bucketName: ""
+      endpointURL: "https://s3.eu-central-003.backblazeb2.com"
+      secretName: backup-s3-secret
+  mycnf: |
+    [mysqld]
+    max_connections=162
+
+# ─── MongoDB (Bitnami chart) ────────────────────────────────────────────────────
+mongodb:
+  deploy: false
+  architecture: "standalone"
+  global:
+    storageClass: ""
+    storageSize: "5Gi"
+  image:
+    tag: "8.0"
+  auth:
+    usernames: []
+    rootPassword: ""
+    passwords: []
+    databases: []
+  passwordUpdateJob:
+    enabled: false
+  backup:
+    enabled: false

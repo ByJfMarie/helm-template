@@ -1,0 +1,76 @@
+{{- if eq .Values.database.type "postgres" }}
+{{- $pg := .Values.postgres }}
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ include "databases.fullname" . }}-postgres
+  labels:
+    {{- include "databases.labels" . | nindent 4 }}
+spec:
+  instances: {{ $pg.instances }}
+  imageName: "ghcr.io/cloudnative-pg/postgresql:{{ $pg.version }}"
+
+  enableSuperuserAccess: true
+  superuserSecret:
+    name: {{ include "databases.fullname" . }}-postgres-superuser
+
+  startDelay: 30
+  stopDelay: 100
+  primaryUpdateStrategy: unsupervised
+
+  postgresql:
+    parameters:
+      max_connections: {{ $pg.postgresql.maxConnections | quote }}
+      shared_buffers: {{ $pg.postgresql.sharedBuffers | quote }}
+    {{- if $pg.initdb.extraLibs }}
+    shared_preload_libraries:
+      {{- range $pg.initdb.extraLibs }}
+      - {{ . | quote }}
+      {{- end }}
+    {{- end }}
+    pg_hba:
+      {{- range $pg.postgresql.pgHba }}
+      - {{ . | quote }}
+      {{- end }}
+
+  bootstrap:
+    initdb:
+      database: {{ $pg.initdb.database }}
+      owner: {{ $pg.initdb.user }}
+      secret:
+        name: {{ $pg.initdb.passwordSecretName }}
+      {{- if $pg.initdb.scripts }}
+      postInitApplicationSQLRefs:
+        configMapRefs:
+          - name: {{ include "databases.fullname" . }}-postgres-init-sql
+            key: init.sql
+      {{- end }}
+
+  storage:
+    size: {{ $pg.storage.size }}
+    {{- if $pg.storage.storageClassName }}
+    storageClass: {{ $pg.storage.storageClassName }}
+    {{- end }}
+
+  {{- if $pg.backup.enabled }}
+  backup:
+    barmanObjectStore:
+      destinationPath: {{ $pg.backup.s3.destinationPath | default (printf "s3://%s/%s-postgres" $pg.backup.s3.bucketName (include "databases.fullname" .)) | quote }}
+      data:
+        compression: gzip
+        encryption: AES256
+        jobs: 2
+      endpointURL: {{ $pg.backup.s3.endpointURL }}
+      s3Credentials:
+        accessKeyId:
+          key: access_key_id
+          name: {{ $pg.backup.s3.secretName }}
+        secretAccessKey:
+          key: secret_access_key
+          name: {{ $pg.backup.s3.secretName }}
+      wal:
+        compression: gzip
+        encryption: AES256
+    retentionPolicy: {{ $pg.backup.retentionPolicy | quote }}
+  {{- end }}
+{{- end }}

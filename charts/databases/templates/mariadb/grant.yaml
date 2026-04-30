@@ -1,0 +1,20 @@
+{{- if eq .Values.database.type "mariadb" }}
+{{- range .Values.mariadb.users }}
+---
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: Grant
+metadata:
+  name: {{ include "databases.fullname" $ }}-{{ .name }}-grant
+spec:
+  mariaDbRef:
+    name: {{ include "databases.fullname" $ }}-mariadb
+  username: {{ .name }}
+  host: {{ .host | quote }}
+  table: "*"
+  database: {{ .database }}
+  privileges:
+    {{- range splitList ", " .privileges }}
+    - {{ . | quote }}
+    {{- end }}
+{{- end }}
+{{- end }}

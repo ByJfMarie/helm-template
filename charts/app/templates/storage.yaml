@@ -1,0 +1,17 @@
+{{- if .Values.persistent.enabled -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.persistent.name }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - {{ .Values.persistent.accessMode | default "ReadWriteOnce" }}
+  resources:
+    requests:
+      storage: {{ .Values.persistent.storage | default "1Gi" }}
+  {{- if .Values.persistent.storageClassName }}
+  storageClassName: {{ .Values.persistent.storageClassName }}
+  {{- end }}
+{{- end }}

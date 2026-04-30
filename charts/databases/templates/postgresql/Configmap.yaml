@@ -1,0 +1,13 @@
+{{- if eq .Values.database.type "postgres" }}
+{{- if .Values.postgres.initdb.scripts }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "databases.fullname" . }}-postgres-init-sql
+  labels:
+    {{- include "databases.labels" . | nindent 4 }}
+data:
+  init.sql: |
+    {{- .Values.postgres.initdb.scripts | nindent 4 }}
+{{- end }}
+{{- end }}

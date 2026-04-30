@@ -1,0 +1,42 @@
+{{- if eq .Values.database.type "redis" }}
+{{- $redis := .Values.redis }}
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: Redis
+metadata:
+  name: {{ include "databases.fullname" . }}-redis
+  labels:
+    {{- include "databases.labels" . | nindent 4 }}
+spec:
+  podSecurityContext:
+    runAsUser: 1000
+    fsGroup: 1000
+  kubernetesConfig:
+    image: quay.io/opstree/redis:v{{ $redis.version }}
+    imagePullPolicy: IfNotPresent
+    resources:
+      requests:
+        cpu: {{ $redis.resources.requests.cpu }}
+        memory: {{ $redis.resources.requests.memory }}
+      limits:
+        cpu: {{ $redis.resources.limits.cpu }}
+        memory: {{ $redis.resources.limits.memory }}
+    {{- if $redis.redisSecret }}
+    redisSecret:
+      name: {{ $redis.redisSecret.name }}
+      key: redisPassword
+    {{- end }}
+  redisExporter:
+    enabled: {{ $redis.exporterEnabled }}
+    image: quay.io/opstree/redis-exporter:v{{ $redis.exporterVersion }}
+    imagePullPolicy: IfNotPresent
+  storage:
+    volumeClaimTemplate:
+      spec:
+        {{- if $redis.storageClassName }}
+        storageClassName: {{ $redis.storageClassName }}
+        {{- end }}
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ $redis.size }}
+{{- end }}

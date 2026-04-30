@@ -1,0 +1,11 @@
+apiVersion: v2
+name: databases
+description: Helm chart for deploying database clusters via Kubernetes operators (PostgreSQL, MariaDB, MySQL, Redis, MongoDB)
+type: application
+version: 0.2.0
+appVersion: "1.0.0"
+dependencies:
+  - name: mongodb
+    repository: https://charts.bitnami.com/bitnami
+    version: 16.4.0
+    condition: mongodb.deploy

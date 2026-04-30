@@ -1,0 +1,14 @@
+{{- if eq .Values.database.type "mariadb" }}
+{{- range .Values.mariadb.databases }}
+---
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: Database
+metadata:
+  name: {{ .name }}
+spec:
+  mariaDbRef:
+    name: {{ include "databases.fullname" $ }}-mariadb
+  characterSet: {{ .characterSet }}
+  collate: {{ .collate }}
+{{- end }}
+{{- end }}

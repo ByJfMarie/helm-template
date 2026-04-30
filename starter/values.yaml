@@ -1,0 +1,122 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# Example values for a full-stack app: frontend + backend + postgres + routing
+# ──────────────────────────────────────────────────────────────────────────────
+
+frontend:
+  replicaCount: 1
+  image:
+    containerName: frontend
+    repository: ghcr.io/my-org/my-app-frontend
+    tag: "1.0.0"
+    pullPolicy: IfNotPresent
+  imagePullSecrets:
+    - name: registry-credentials
+  service:
+    name: frontend
+    type: ClusterIP
+    port: 80
+    targetPort: 80
+  livenessProbe:
+    initialDelaySeconds: 10
+    httpGet:
+      path: /
+      port: http
+  readinessProbe:
+    initialDelaySeconds: 10
+    httpGet:
+      path: /
+      port: http
+  resourcesPreset: small
+
+backend:
+  replicaCount: 1
+  image:
+    containerName: backend
+    repository: ghcr.io/my-org/my-app-backend
+    tag: "1.0.0"
+    pullPolicy: IfNotPresent
+  imagePullSecrets:
+    - name: registry-credentials
+  image:
+    env:
+      - name: DB_HOST
+        value: "my-app-database-postgres-rw"
+      - name: DB_NAME
+        value: "mydb"
+    envFrom:
+      - secretRef:
+          name: my-app-backend-secrets
+  service:
+    name: backend
+    type: ClusterIP
+    port: 80
+    targetPort: 8080
+  livenessProbe:
+    initialDelaySeconds: 30
+    httpGet:
+      path: /health
+      port: http
+  readinessProbe:
+    initialDelaySeconds: 30
+    httpGet:
+      path: /health
+      port: http
+  resourcesPreset: small
+  persistent:
+    enabled: true
+    name: backend-data
+    storage: 10Gi
+    storageClassName: ""
+    accessMode: ReadWriteOnce
+  deployVolume: true
+  volumes:
+    - name: backend-data
+      persistentVolumeClaim:
+        claimName: backend-data
+  volumeMounts:
+    - mountPath: /app/data
+      name: backend-data
+
+database:
+  database:
+    type: postgres
+  postgres:
+    instances: 1
+    version: "16.3"
+    storage:
+      size: 10Gi
+      storageClassName: ""
+    initdb:
+      database: mydb
+      user: myuser
+      password: ""
+      passwordSuperUser: ""
+      passwordSecretName: my-app-postgres-secret
+      extraLibs:
+        - pg_stat_statements
+      scripts: |
+        CREATE SCHEMA IF NOT EXISTS myapp;
+    backup:
+      enabled: false
+
+network:
+  name: my-app
+  ingressClassName: "traefik"
+  traefikNamespace: "traefik"
+  tls:
+    enabled: true
+    letsencryptEnv: "staging"
+    commonName: myapp.example.com
+    dnsNames:
+      - myapp.example.com
+  traefik:
+    domain: myapp.example.com
+    routes:
+      - match: "Host(`myapp.example.com`)"
+        service:
+          name: frontend
+          port: 80
+      - match: "Host(`myapp.example.com`) && PathPrefix(`/api`)"
+        service:
+          name: backend
+          port: 80

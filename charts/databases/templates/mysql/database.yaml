@@ -1,0 +1,47 @@
+{{- if eq .Values.database.type "mysql" }}
+{{- $db := .Values.mysql }}
+apiVersion: mysql.oracle.com/v2
+kind: InnoDBCluster
+metadata:
+  name: {{ include "databases.fullname" . }}-mysql
+  labels:
+    {{- include "databases.labels" . | nindent 4 }}
+spec:
+  instances: {{ $db.instances }}
+  tlsUseSelfSigned: {{ $db.tlsUseSelfSigned }}
+  router:
+    instances: {{ $db.router.instances }}
+  secretName: {{ include "databases.fullname" . }}-mysql-secret
+  imagePullPolicy: IfNotPresent
+  baseServerId: {{ $db.baseServerId }}
+  version: {{ $db.version }}
+  serviceAccountName: {{ include "databases.fullname" . }}-mysql-sa
+  datadirVolumeClaimTemplate:
+    {{- if $db.storage.storageClassName }}
+    storageClassName: {{ $db.storage.storageClassName }}
+    {{- end }}
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: {{ $db.storage.storageSize }}
+  {{- if $db.mycnf }}
+  mycnf: {{ $db.mycnf | toYaml | nindent 4 }}
+  {{- end }}
+  {{- if $db.backup.enabled }}
+  backupProfiles:
+    - name: {{ include "databases.fullname" . }}-backup-profile
+      dumpInstance:
+        storage:
+          s3:
+            bucketName: {{ $db.backup.s3.bucketName }}
+            config: {{ $db.backup.s3.secretName }}
+            prefix: {{ printf "mysql-%s" (include "databases.fullname" .) | quote }}
+            endpoint: {{ $db.backup.s3.endpointURL }}
+  backupSchedules:
+    - name: {{ include "databases.fullname" . }}-backup-schedule
+      schedule: {{ $db.backup.schedule | quote }}
+      backupProfileName: {{ include "databases.fullname" . }}-backup-profile
+      enabled: true
+  {{- end }}
+{{- end }}

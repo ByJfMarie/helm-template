@@ -1,0 +1,15 @@
+{{- if eq .Values.database.type "postgres" }}
+{{- if .Values.postgres.backup.enabled }}
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: {{ include "databases.fullname" . }}-postgres-backup
+  labels:
+    {{- include "databases.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.postgres.backup.schedule | quote }}
+  backupOwnerReference: self
+  cluster:
+    name: {{ include "databases.fullname" . }}-postgres
+{{- end }}
+{{- end }}

@@ -1,0 +1,24 @@
+{{- if eq .Values.database.type "mariadb" }}
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: MariaDB
+metadata:
+  name: {{ include "databases.fullname" . }}-mariadb
+  labels:
+    {{- include "databases.labels" . | nindent 4 }}
+spec:
+  image: {{ .Values.mariadb.image }}
+  replicas: {{ .Values.mariadb.replicaCount }}
+  storage:
+    size: {{ .Values.mariadb.size }}
+    {{- if .Values.mariadb.storageClassName }}
+    storageClassName: {{ .Values.mariadb.storageClassName }}
+    {{- end }}
+  rootEmptyPassword: false
+  rootPasswordSecretKeyRef:
+    name: {{ .Values.mariadb.rootPasswordSecretName }}
+    key: password
+  resources:
+    requests:
+      memory: {{ .Values.mariadb.resources.requests.memory }}
+      cpu: {{ .Values.mariadb.resources.requests.cpu }}
+{{- end }}

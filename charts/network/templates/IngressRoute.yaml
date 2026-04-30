@@ -1,0 +1,40 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .Values.name }}-ingress-route
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "network.labels" . | nindent 4 }}
+spec:
+  entryPoints:
+    - web
+    - websecure
+  {{- if .Values.ingressClassName }}
+  ingressClassName: {{ .Values.ingressClassName }}
+  {{- end }}
+  routes:
+    {{- range .Values.traefik.routes }}
+    - match: {{ .match | quote }}
+      kind: Rule
+      services:
+        - name: {{ .service.name }}
+          port: {{ .service.port }}
+      middlewares:
+        - name: https-redirect
+          namespace: {{ $.Values.traefikNamespace }}
+        {{- if .htaccess }}
+        - name: {{ printf "%s-auth" $.Values.name }}
+          namespace: {{ $.Release.Namespace }}
+        {{- end }}
+        {{- range .middlewares }}
+        - name: {{ .name }}
+          {{- if .namespace }}
+          namespace: {{ .namespace }}
+          {{- end }}
+        {{- end }}
+    {{- end }}
+
+  {{- if .Values.tls.enabled }}
+  tls:
+    secretName: {{ .Values.tls.secretName | default (printf "%s-tls" .Values.name) }}
+  {{- end }}

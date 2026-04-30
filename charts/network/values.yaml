@@ -1,0 +1,41 @@
+name: network
+
+# IngressClass to use — set to "traefik-internal" for internal-only access
+ingressClassName: "traefik"
+
+# Traefik namespace where shared middlewares (https-redirect) live
+traefikNamespace: "traefik"
+
+tls:
+  enabled: false
+  # letsencryptEnv: staging | prod
+  letsencryptEnv: "staging"
+  secretName: ""
+  commonName: example.com
+  dnsNames:
+    - example.com
+
+traefik:
+  domain: example.com
+  routes: []
+  # - match: "Host(`example.com`)"
+  #   service:
+  #     name: frontend
+  #     port: 80
+  #
+  # - match: "Host(`example.com`) && PathPrefix(`/api`)"
+  #   service:
+  #     name: backend
+  #     port: 80
+  #   middlewares:
+  #     - name: api-strip-prefix
+  #       namespace: traefik
+  #
+  # - match: "Host(`example.com`) && PathPrefix(`/admin`)"
+  #   service:
+  #     name: backend
+  #     port: 80
+  #   htaccess:
+  #     users:
+  #       - username: admin
+  #         password: "$apr1$..."  # htpasswd -nb admin password

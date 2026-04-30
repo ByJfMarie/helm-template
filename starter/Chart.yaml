@@ -1,0 +1,23 @@
+apiVersion: v2
+name: my-app
+description: Umbrella chart for a full-stack application deployment (frontend + backend + database + network)
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+dependencies:
+  - name: app
+    version: "0.2.0"
+    repository: "https://byjfmarie.github.io/helm-template"
+    alias: frontend
+  - name: app
+    version: "0.2.0"
+    repository: "https://byjfmarie.github.io/helm-template"
+    alias: backend
+  - name: databases
+    version: "0.2.0"
+    repository: "https://byjfmarie.github.io/helm-template"
+    alias: database
+  - name: network
+    version: "1.1.0"
+    repository: "https://byjfmarie.github.io/helm-template"
+    alias: network
