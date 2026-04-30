@@ -10,8 +10,20 @@ image:
   digest: ""
   tag: "latest"
   env: []
-  # - name: MY_VAR
-  #   value: "my-value"
+  # Valeur en clair :
+  # - name: APP_ENV
+  #   value: "production"
+  #
+  # Valeur chiffrée SOPS (déchiffrée par helm-secrets à l'install) :
+  # - name: DB_PASSWORD
+  #   valueEncrypt: "ENC[AES256_GCM,data:...,type:str]"
+  #
+  # Valeur depuis un Secret ou ConfigMap Kubernetes :
+  # - name: DB_PASSWORD
+  #   valueFrom:
+  #     secretKeyRef:
+  #       name: my-secret
+  #       key: password
   envFrom: []
   # - configMapRef:
   #     name: my-configmap

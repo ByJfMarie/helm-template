@@ -84,10 +84,38 @@ Le cluster cible est géré via FluxCD dans le repo `ByJfMarie/gitops`.
 
 ---
 
-## Secrets (jamais dans Git)
+## Secrets & SOPS
 
-Les mots de passe et clés API ne doivent jamais être commités.
-Utiliser des références à des Secrets Kubernetes créés séparément (SealedSecrets, External Secrets Operator, ou création manuelle).
+Les mots de passe et clés API ne doivent jamais être commités en clair.
+
+**Workflow SOPS + helm-secrets :**
+
+```bash
+# 1. Initialiser l'environnement (helm, sops, age, helm-secrets plugin)
+source venv.sh
+
+# 2. Générer une clé age (une seule fois)
+age-keygen -o key.txt
+# → copier la clé publique dans .sops.yaml
+
+# 3. Créer et chiffrer les secrets
+cp starter/secrets.example.yaml secrets.yaml
+# éditer secrets.yaml avec les vraies valeurs
+sops --encrypt secrets.yaml > secrets.enc.yaml
+rm secrets.yaml  # ne jamais commiter la version non chiffrée
+
+# 4. Déployer
+helm secrets install my-app ./starter -f values.yaml -f secrets.enc.yaml -n my-app
+```
+
+**Convention dans les values :**
+- `value` → valeur en clair (commitable)
+- `valueEncrypt` → valeur déchiffrée par SOPS/helm-secrets (dans `secrets.enc.yaml`)
+- `valueFrom` → référence à un Secret/ConfigMap Kubernetes existant
+
+**Fichiers protégés par `.gitignore` :** `secrets.yaml`, `*.secrets.yaml`, `key.txt`
+
+**Avec FluxCD :** utiliser `valuesFrom` avec un Secret Kubernetes contenant les valeurs sensibles (créé manuellement ou via External Secrets Operator).
 
 ---
 

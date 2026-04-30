@@ -13,5 +13,12 @@ helm-steamulo-app/
 helm-steamulo-databases/
 helm-steamulo-network/
 
+# SOPS — ne jamais commiter les secrets non chiffrés
+secrets.yaml
+*.secrets.yaml
+
+# Clé age locale
+key.txt
+
 # OS
 .DS_Store

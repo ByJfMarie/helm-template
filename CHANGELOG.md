@@ -9,6 +9,15 @@ Versioning : [Semantic Versioning](https://semver.org/)
 
 ## [Unreleased]
 
+### Added
+- `.sops.yaml` : configuration SOPS avec age pour chiffrer les fichiers `secrets.yaml`
+- `venv.sh` + `install.sh` : bootstrap de l'environnement local (helm, sops, age, kubectl, plugins helm-diff et helm-secrets)
+- `starter/secrets.example.yaml` : template des valeurs sensibles à chiffrer avec SOPS
+- Convention `valueEncrypt` restaurée dans `charts/app` : permet de passer des secrets chiffrés SOPS via helm-secrets
+- Support `valueFrom` (secretKeyRef / configMapKeyRef) dans les env vars du chart `app`
+- `.gitignore` : exclusion automatique de `secrets.yaml` et `key.txt`
+- `CLAUDE.md` : documentation du workflow SOPS complet
+
 ---
 
 ## [1.0.0] - 2026-04-30

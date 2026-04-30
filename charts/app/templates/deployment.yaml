@@ -49,7 +49,12 @@ spec:
           env:
             {{- range .Values.image.env }}
             - name: {{ .name }}
-              value: {{ .value | quote }}
+              {{- if .valueFrom }}
+              valueFrom:
+                {{- toYaml .valueFrom | nindent 16 }}
+              {{- else }}
+              value: {{ (.valueEncrypt | default .value) | quote }}
+              {{- end }}
             {{- end }}
           {{- end }}
           {{- if .Values.image.envFrom }}
