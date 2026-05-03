@@ -1,0 +1,13 @@
+creation_rules:
+  # Chiffrer tous les fichiers secrets.yaml avec age
+  - path_regex: secrets(\.enc)?\.yaml$
+    key_groups:
+      - age:
+          # Remplacer par ta clé publique age : age-keygen -o key.txt
+          - age1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+  # Chiffrer les fichiers .enc.yaml (convention alternative)
+  - path_regex: \.enc\.yaml$
+    key_groups:
+      - age:
+          - age1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
