@@ -88,23 +88,29 @@ Le cluster cible est géré via FluxCD dans le repo `ByJfMarie/gitops`.
 
 Les mots de passe et clés API ne doivent jamais être commités en clair.
 
-**Workflow SOPS + helm-secrets :**
+**Prérequis (une seule fois) :**
 
 ```bash
-# 1. Initialiser l'environnement (helm, sops, age, helm-secrets plugin)
-source venv.sh
+brew install sops age helm kubectl
+helm plugin install https://github.com/jkroepke/helm-secrets
+helm plugin install https://github.com/databus23/helm-diff
+```
 
-# 2. Générer une clé age (une seule fois)
+**Workflow SOPS :**
+
+```bash
+# Générer une clé age (une seule fois)
 age-keygen -o key.txt
 # → copier la clé publique dans .sops.yaml
+# → sauvegarder key.txt en lieu sûr (1Password, etc.)
 
-# 3. Créer et chiffrer les secrets
+# Créer et chiffrer les secrets
 cp starter/secrets.example.yaml secrets.yaml
 # éditer secrets.yaml avec les vraies valeurs
 sops --encrypt secrets.yaml > secrets.enc.yaml
 rm secrets.yaml  # ne jamais commiter la version non chiffrée
 
-# 4. Déployer
+# Déployer
 helm secrets install my-app ./starter -f values.yaml -f secrets.enc.yaml -n my-app
 ```
 
