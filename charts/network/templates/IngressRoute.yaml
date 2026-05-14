@@ -9,9 +9,7 @@ spec:
   entryPoints:
     - web
     - websecure
-  {{- if .Values.ingressClassName }}
-  ingressClassName: {{ .Values.ingressClassName }}
-  {{- end }}
+  # ingressClassName n'est pas un champ valide pour Traefik IngressRoute (c'est un champ Ingress K8s)
   routes:
     {{- range .Values.traefik.routes }}
     - match: {{ .match | quote }}
