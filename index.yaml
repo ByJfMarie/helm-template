@@ -1,0 +1,41 @@
+apiVersion: v1
+entries:
+  app:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-05-14T18:30:03Z"
+    description: Helm chart for deploying a containerized application on Kubernetes
+    digest: 61d1c696221a7c558f4d84cbf3c06d9b91a767b82be179df43a8c4a2c9446a2c
+    name: app
+    type: application
+    urls:
+    - https://github.com/ByJfMarie/helm-template/releases/download/app-0.2.0/app-0.2.0.tgz
+    version: 0.2.0
+  databases:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-05-14T18:30:05Z"
+    dependencies:
+    - condition: mongodb.deploy
+      name: mongodb
+      repository: https://charts.bitnami.com/bitnami
+      version: 16.4.0
+    description: Helm chart for deploying database clusters via Kubernetes operators (PostgreSQL, MariaDB, MySQL, Redis, MongoDB)
+    digest: ec556d50ddcc84d91172beaca457f35689a5c21f9933c52231b4f19d21f9406a
+    name: databases
+    type: application
+    urls:
+    - https://github.com/ByJfMarie/helm-template/releases/download/databases-0.2.1/databases-0.2.1.tgz
+    version: 0.2.1
+  network:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-05-14T18:30:06Z"
+    description: Helm chart for Kubernetes ingress routing with Traefik and cert-manager TLS
+    digest: dc10ab238c8f94c748ac8f3cbd9f313e0fa8e361a208c2c23782dc50cdec1804
+    name: network
+    type: application
+    urls:
+    - https://github.com/ByJfMarie/helm-template/releases/download/network-1.1.0/network-1.1.0.tgz
+    version: 1.1.0
+generated: "2026-05-14T18:30:06Z"
