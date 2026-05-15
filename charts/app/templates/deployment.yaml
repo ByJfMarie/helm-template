@@ -67,11 +67,23 @@ spec:
               protocol: TCP
           {{- if .Values.livenessProbeEnabled }}
           livenessProbe:
-            {{- toYaml .Values.livenessProbe | nindent 12 }}
+            {{- if .Values.livenessProbe.tcpSocket }}
+            {{- omit .Values.livenessProbe "httpGet" "exec" | toYaml | nindent 12 }}
+            {{- else if .Values.livenessProbe.exec }}
+            {{- omit .Values.livenessProbe "httpGet" "tcpSocket" | toYaml | nindent 12 }}
+            {{- else }}
+            {{- omit .Values.livenessProbe "tcpSocket" "exec" | toYaml | nindent 12 }}
+            {{- end }}
           {{- end }}
           {{- if .Values.readinessProbeEnabled }}
           readinessProbe:
-            {{- toYaml .Values.readinessProbe | nindent 12 }}
+            {{- if .Values.readinessProbe.tcpSocket }}
+            {{- omit .Values.readinessProbe "httpGet" "exec" | toYaml | nindent 12 }}
+            {{- else if .Values.readinessProbe.exec }}
+            {{- omit .Values.readinessProbe "httpGet" "tcpSocket" | toYaml | nindent 12 }}
+            {{- else }}
+            {{- omit .Values.readinessProbe "tcpSocket" "exec" | toYaml | nindent 12 }}
+            {{- end }}
           {{- end }}
           {{- if and .Values.resources (not (empty .Values.resources)) }}
           resources:
