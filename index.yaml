@@ -3,6 +3,16 @@ entries:
   app:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-05-15T09:32:36.497535043Z"
+    description: Helm chart for deploying a containerized application on Kubernetes
+    digest: 02f6c35a29697fcf6e31038eb68412790a10d12b80dc0c24040e233c86411b85
+    name: app
+    type: application
+    urls:
+    - https://github.com/ByJfMarie/helm-template/releases/download/app-0.2.1/app-0.2.1.tgz
+    version: 0.2.1
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2026-05-14T18:30:03Z"
     description: Helm chart for deploying a containerized application on Kubernetes
     digest: 61d1c696221a7c558f4d84cbf3c06d9b91a767b82be179df43a8c4a2c9446a2c
@@ -62,4 +72,4 @@ entries:
     urls:
     - https://github.com/ByJfMarie/helm-template/releases/download/network-1.1.0/network-1.1.0.tgz
     version: 1.1.0
-generated: "2026-05-15T09:09:25.128809886Z"
+generated: "2026-05-15T09:32:36.497548698Z"
