@@ -31,6 +31,17 @@ entries:
   network:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-05-15T09:09:25.128798749Z"
+    description: Helm chart for Kubernetes ingress routing with Traefik and cert-manager
+      TLS
+    digest: 2883b2bad1c2a6362c8679eb4c1d1660bd9f85ff6cdc7fd522f66c6175fea01c
+    name: network
+    type: application
+    urls:
+    - https://github.com/ByJfMarie/helm-template/releases/download/network-1.1.2/network-1.1.2.tgz
+    version: 1.1.2
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2026-05-14T19:06:27.990657731Z"
     description: Helm chart for Kubernetes ingress routing with Traefik and cert-manager
       TLS
@@ -51,4 +62,4 @@ entries:
     urls:
     - https://github.com/ByJfMarie/helm-template/releases/download/network-1.1.0/network-1.1.0.tgz
     version: 1.1.0
-generated: "2026-05-14T19:06:27.99066383Z"
+generated: "2026-05-15T09:09:25.128809886Z"
