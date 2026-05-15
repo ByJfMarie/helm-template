@@ -17,6 +17,10 @@ tls:
 
 traefik:
   domain: example.com
+  # ingressClass: sélectionne l'instance Traefik via annotation traefik.io/ingress.class
+  #   ""                 → traefik-public (classe par défaut, pas d'annotation)
+  #   "traefik-internal" → traefik-internal (accès LAN uniquement)
+  ingressClass: ""
   routes: []
   # - match: "Host(`example.com`)"
   #   service:

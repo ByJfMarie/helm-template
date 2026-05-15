@@ -5,6 +5,10 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "network.labels" . | nindent 4 }}
+  {{- if .Values.traefik.ingressClass }}
+  annotations:
+    traefik.io/ingress.class: {{ .Values.traefik.ingressClass | quote }}
+  {{- end }}
 spec:
   entryPoints:
     - web
